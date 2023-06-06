@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Student Management System</title>
+    <style>
+    .error {
+        color: red;
+    }
+
+    </style>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+</head>
+<body>
+<nav class="navbar navbar-expand-md bg-dark navbar-dark">
+    <!-- Brand -->
+    <a class="navbar-brand" href="#">Student Management System</a>
+
+    <!-- Toggler/collapsibe Button -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar links -->
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/students}">Student Management</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<br>
+<br>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-6 container justify-content-center card">
+            <h1 class="text-center"> Create New Student </h1>
+            <div class="card-body">
+                <form th:action="@{/students}" th:object="${student}" method="POST">
+
+
+                    <!--                    s?a l?i id ?? có th? t? di?n-->
+
+<!--                    <div class="form-group">-->
+<!--                        <label> Student Id </label>-->
+<!--                        <input-->
+<!--                                type="text"-->
+<!--                                name="id"-->
+<!--                                th:field="*{id}"-->
+<!--                                class="form-control"-->
+<!--                                placeholder="Enter Student id"/>-->
+<!--                        <ul>-->
+<!--                            <li th:each="err : ${#fields.errors('name')}" th:text="${err}"-->
+<!--                                class="error"/>-->
+<!--                        </ul>-->
+<!--                    </div>-->
+
+                    <div class="form-group">
+                        <label> Student Name </label>
+                        <input
+                                type="text"
+                                name="Name"
+                                th:field="*{name}"
+                                class="form-control"
+                                placeholder="Enter Student Name"
+                        />
+                        <ul>
+                            <li th:each="err : ${#fields.errors('name')}" th:text="${err}"
+                                class="error"/>
+                        </ul>
+                    </div>
+
+                    <div class="form-group">
+                        <label> Student Email </label>
+                        <input
+                                type="text"
+                                name="email"
+                                th:field="*{email}"
+                                class="form-control"
+                                placeholder="Enter Student Email"
+                        />
+                        <!-- g?i bi?n ? bên controller sang-->
+                        <div th:if="${successMessage}" class="alert alert-success" id="successMessage">
+                            <strong>Success!</strong> <span th:text="${successMessage}"></span>
+                        </div>
+
+
+
+                        <div th:if="${errorMessage}" class="alert alert-warning" id="errorMessage">
+                            <strong>Warning!</strong> <span th:text="${errorMessage}"></span>
+                        </div>
+
+
+                        <script>
+    setTimeout(() => {
+        var element = document.getElementById("errorMessage");
+        element.style.display = "none";
+    }, 3000);
+</script>
+
+
+                        <p th:if="${#fields.hasErrors('email')}"
+                           th:class="${#fields.hasErrors('email')}? error"
+                           th:errors="*{email}"/>
+                    </div>
+
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-primary">
+                            Submit
+                        </button>
+                        <!--                        <div class="alert alert-success">-->
+                        <!--                            <strong>Success !</strong>-->
+                        <!--                        </div>-->
+
+
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--ch? nh? ?? làm cái g n?a -->
+<!--<h1>Settings</h1>-->
+<!--<div class="alert alert-primary" role="alert" th:text="${success}" th:if="${success}"></div>-->
+<!--<div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>-->
+</body>
+
+</html>
