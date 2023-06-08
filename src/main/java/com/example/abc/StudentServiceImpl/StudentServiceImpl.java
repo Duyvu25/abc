@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.example.abc.repository.StudentRepository;
+import org.springframework.ui.Model;
 
 import java.util.List;
 
@@ -54,17 +55,14 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<Student> searchStudents(String keyword) {
+    public Page<Student> searchStudents(int pageNo, String keyword) {
+        return null;
+    }
+    @Override
+    public List<Student> listAll(String keyword) {
         return null;
     }
 
-    @Override
-    public List<Student> listAll(String keyword) {
-        if (keyword != null) {
-            return studentRepository.search(keyword);
-        }
-        return studentRepository.findAll();
-    }
 
 }
 

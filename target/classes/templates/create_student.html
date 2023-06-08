@@ -41,24 +41,7 @@
         <div class="col-lg-6 col-md-6 col-sm-6 container justify-content-center card">
             <h1 class="text-center"> Create New Student </h1>
             <div class="card-body">
-                <form th:action="@{/students}" th:object="${student}" method="POST">
-
-
-                    <!--                    s?a l?i id ?? có th? t? di?n-->
-
-<!--                    <div class="form-group">-->
-<!--                        <label> Student Id </label>-->
-<!--                        <input-->
-<!--                                type="text"-->
-<!--                                name="id"-->
-<!--                                th:field="*{id}"-->
-<!--                                class="form-control"-->
-<!--                                placeholder="Enter Student id"/>-->
-<!--                        <ul>-->
-<!--                            <li th:each="err : ${#fields.errors('name')}" th:text="${err}"-->
-<!--                                class="error"/>-->
-<!--                        </ul>-->
-<!--                    </div>-->
+                <form th:action="@{/students-search}" th:object="${student}" method="POST">
 
                     <div class="form-group">
                         <label> Student Name </label>
@@ -97,11 +80,11 @@
 
 
                         <script>
-    setTimeout(() => {
-        var element = document.getElementById("errorMessage");
-        element.style.display = "none";
-    }, 3000);
-</script>
+                            setTimeout(() => {
+                                var element = document.getElementById("errorMessage");
+                                element.style.display = "none";
+                            }, 3000);
+                        </script>
 
 
                         <p th:if="${#fields.hasErrors('email')}"
@@ -113,11 +96,6 @@
                         <button type="submit" class="btn btn-primary">
                             Submit
                         </button>
-                        <!--                        <div class="alert alert-success">-->
-                        <!--                            <strong>Success !</strong>-->
-                        <!--                        </div>-->
-
-
                     </div>
                 </form>
 
@@ -125,11 +103,6 @@
         </div>
     </div>
 </div>
-
-<!--ch? nh? ?? làm cái g n?a -->
-<!--<h1>Settings</h1>-->
-<!--<div class="alert alert-primary" role="alert" th:text="${success}" th:if="${success}"></div>-->
-<!--<div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>-->
 </body>
 
 </html>

@@ -2,9 +2,12 @@ package com.example.abc.StudentController;
 
 import com.example.abc.StudentService.StudentService;
 import com.example.abc.entity.Student;
+import com.example.abc.repository.StudentRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -21,8 +25,10 @@ public class StudentController {
     @Autowired
     private StudentService studentService;
 
+    @Autowired
+    private StudentRepository studentRepository;
     //search bar 2
-    @RequestMapping("/")
+    @RequestMapping("/search-result/{pageNo}")
     public String Student(Model model, @Param("keyword") String keyword) {
         List<Student> listStudents = studentService.listAll(keyword);
         model.addAttribute("listStudent", listStudents);
@@ -45,33 +51,32 @@ public class StudentController {
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("totalItems", page.getTotalElements());
         model.addAttribute("students", listStudents);
-
-//        model.addAttribute("students", studentService.getAllStudents());
-//        model.addAttribute("currentPage", 1);
-//        model.addAttribute("pageNumber", 1);
-//        model.addAttribute("totalPages", 1);
-        // thêm hs thnahf cng thì báo
-        // model.addAttribute("successMessage", "Student create successful");
         return "students";
     }
 
-    // sreach bar
-
-//    public String getStudentList(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
-//        List<Student> students;
-//
-//        if (keyword != null && !keyword.isEmpty()) {
-//            // Nếu có từ khóa, thực hiện tìm kiếm danh sách học sinh dựa trên từ khóa
-//            students = studentService.searchStudents(keyword);
-//        } else {
-//            // Ngược lại, lấy toàn bộ danh sách học sinh
-//            students = studentService.getAllStudents();
-//        }
-//
-//        model.addAttribute("students", students);
-//        return "students";
-//    }
-/// search bar
+    @GetMapping("/students-search")
+    public String getAll (Model model,@RequestParam(required = false) String keyword,@RequestParam(defaultValue = "1") int page,@RequestParam(defaultValue = "3") int size){
+        try {
+            List<Student> students = new ArrayList<Student>();
+            Pageable paging = PageRequest.of(page-1,size);
+            Page<Student> pageStu;
+            if(keyword == null){
+                pageStu = studentRepository.findAll(paging);
+            }else{
+                pageStu = studentRepository.search(keyword,paging);
+                model.addAttribute("keyword",keyword);
+            }
+            students = pageStu.getContent();
+            model.addAttribute("students",students);
+            model.addAttribute("currentPage",pageStu.getNumber()+1);
+            model.addAttribute("totalItems",pageStu.getTotalElements());
+            model.addAttribute("totalPages",pageStu.getTotalPages());
+            model.addAttribute("pageSize",size);
+        }catch (Exception e){
+            model.addAttribute("message",e.getMessage());
+        }
+        return "student1";
+    }
 
     @GetMapping("/students/new")
     public String createStudentForm(Model model) {
@@ -84,7 +89,7 @@ public class StudentController {
 
 
 
-    @PostMapping("/students")
+    @PostMapping("/students-search")
     public String saveStudent(@Valid Student student, BindingResult result, Model model, RedirectAttributes redirectAttributes) throws InterruptedException {
         if (result.hasErrors()) {
             return "create_student";
@@ -100,7 +105,7 @@ public class StudentController {
         studentService.saveStudent(student);
         model.addAttribute("successMessage", "Thêm học sinh thành công.");
         redirectAttributes.addFlashAttribute("successMessage", "Create student successfully");
-        return "redirect:/students";
+        return "redirect:/students-search";
 
         // search
 
@@ -121,7 +126,7 @@ public class StudentController {
         return "edit_student";
     }
 
-    @PostMapping("/students/{id}")
+    @PostMapping("/students/edit/{id}")
     public String updateStudent(@PathVariable Long id,
                                 @ModelAttribute("student") Student student,
                                 Model model, RedirectAttributes redirectAttributes) {
@@ -133,7 +138,7 @@ public class StudentController {
 
         studentService.updateStudent(excitingStudent);
         redirectAttributes.addFlashAttribute("successMessage", "update student successfully");
-        return "redirect:/students";
+        return "redirect:/students-search";
     }
 
     @GetMapping("/students/{id}")
