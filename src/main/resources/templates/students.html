@@ -1,6 +1,15 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+          integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
     <meta charset="ISO-8859-1">
     <title>Student Management System</title>
     <link rel="stylesheet"
@@ -25,9 +34,11 @@
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/students}">Student Management</a>
             </li>
-            <li class="nav-item">
+
+            <!--<li class="nav-item">
                 <a class="nav-link" th:href="@{/students}">Teacher Management</a>
-            </li>
+            </li>-->
+
         </ul>
     </div>
 </nav>
@@ -36,10 +47,36 @@
     <div class = "row">
         <h1> List Students </h1>
     </div>
+<!--sreach bả thuận-->
+    <div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
+        <div th:if="${message != null}" class="alert alert-success alert-dismissible fade show text-center message"
+             role="alert" id="message">
+            [[${message}]]
+            <button type="button" class="close btn-sm" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
 
+        <div class="my-3">
+            <form th:action="@{/students}" id="searchForm">
+                <div class="row d-flex">
+                    <div class="col-md-6 mt-2">
+                        <div class="search">
+                            <input id="keyword" type="search" name="keyword" th:value="${keyword}" required class="form-control"
+                                   placeholder="Enter keyword">
+                        </div>
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <button type="submit" class="btn btn-secondary">Search</button>
 
+                        <a id="btnClear" href="/students" class="btn btn-info">Clear</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+<!--end sreach bả thuận-->
     <!--sreach bar-->
-    <form th:action="@{/}">
+ <!--   <form th:action="@{/}">
         Filter: <input type="text" name="keyword" id="keyword" size="50" th:value="${keyword}" required />
         &nbsp;
         <input type="submit" value="Search" />
@@ -51,20 +88,20 @@
     }
 </script>
 
-
-    <div th:if="${successMessage}" class="alert alert-success" id="successMessage">
-        <strong>Success!</strong> <span th:text="${successMessage}"></span>
-    </div>
-
+-->
+<!--    <div th:if="${successMessage}" class="alert alert-success" id="successMessage">-->
+<!--        <strong>Success!</strong> <span th:text="${successMessage}"></span>-->
+<!--    </div>-->
+<!--end sreach bar-->
 
 <!--    ?n sau 3s xu?t hi?n-->
 
     <script>
-    setTimeout(() => {
-        var element = document.getElementById("successMessage");
-        element.style.display = "none";
-    }, 3000);
-</script>
+        setTimeout(() => {
+            var element = document.getElementById("message");
+            element.style.display = "none";
+        }, 3000);
+    </script>
 
 
     <div class = "row">
@@ -93,20 +130,37 @@
 
                 <a th:href="@{/students/{id}(id=${student.id})}"
                    class="btn btn-danger">Delete</a>
-
-
             </td>
         </tr>
         </tbody>
-
     </table>
 
+        <div th:unless="${students.size() > 0}">
+            <span>No student found!</span>
+        </div>
+
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
+                    <a th:href="@{'/students?pageNo=1' + '&keyword=' + ${keyword}}" class="page-link">First</a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
+                    <a th:href="@{'/students?pageNo=' + ${currentPage - 1} + '&keyword=' + ${keyword}}" class="page-link">Previous</a>
+                </li>
+
+                <li th:each="pageNumber : ${#numbers.sequence(1, totalPages)}" class="page-item" th:classappend="${pageNumber == currentPage} ? 'active'">
+                    <a th:href="@{'/students?pageNo=' + ${pageNumber} + '&keyword=' + ${keyword}}" class="page-link" th:text="${pageNumber}"></a>
+                </li>
+
+                <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
+                    <a th:href="@{'/students?pageNo=' + ${currentPage + 1} + '&keyword=' + ${keyword}}" class="page-link">Next</a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
+                    <a th:href="@{'/students?pageNo=' + ${totalPages} + '&keyword=' + ${keyword}}" class="page-link">Last</a>
+                </li>
+            </ul>
+        </nav>
 </div>
-<nav aria-label="Page navigation example">
-    <ul class="pagination">
-        <li class="page-item">
-    </ul>
-</nav>
 
 
 
@@ -115,7 +169,8 @@
 
 
 
-<!-- Hi?n th? ph�n trang -->
+
+<!-- Hi?n th? phân trang -->
 
 <!--<div class="pagination">-->
 <!--    <ul>-->
@@ -146,5 +201,6 @@
 <!--    <span th:unless="${currentPage &lt; totalPages}" class="page-link">Last</span>-->
 <!--</div>-->
 
+</div>
 </body>
 </html>

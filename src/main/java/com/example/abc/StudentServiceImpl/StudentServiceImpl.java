@@ -63,6 +63,9 @@ public class StudentServiceImpl implements StudentService {
         return null;
     }
 
+    public Page<Student> search(String keyword, Pageable pageable) {
+        return this.studentRepository.search(keyword, pageable);
+    }
 
 }
 

@@ -17,19 +17,12 @@ import java.util.List;
 public interface StudentRepository extends JpaRepository<Student, Long> {
     boolean existsByEmail(String email);
 
-
     // search bar repo
     @Query("SELECT s FROM Student s WHERE s.name LIKE %:keyword%"
-            + " OR s.id LIKE %:keyword%"
-            + " OR s.email LIKE %:keyword%")
+//            + " OR s.id LIKE %:keyword%"
+//            + " OR s.email LIKE %:keyword%"
+    )
     Page<Student> search(String keyword, Pageable pageable);
-
-    @Query("SELECT s FROM Student s WHERE s.name LIKE %:keyword%"
-            + " OR s.id LIKE %:keyword%"
-            + " OR s.email LIKE %:keyword%")
-    List<Student> searchStudent(String keyword);
-
-    /// search bả repo
 }
 
 

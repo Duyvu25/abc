@@ -4,6 +4,7 @@ import com.example.abc.entity.Student;
 import com.example.abc.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -23,4 +24,5 @@ public interface StudentService {
 
     List<Student> listAll(String keyword);
 
+    Page<Student> search(String keyword, Pageable paging);
 }

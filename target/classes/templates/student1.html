@@ -1,42 +1,5 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
-    <title>Search Example</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
-    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
-          integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
-          crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
-    <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+<div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
 
-</head>
-<body>
-    <header th:fragment="header">
-        <nav class="navbar navbar-expand-md bg-dark navbar-dark">
-            <a th:href="@{/students}" class="navbar-brand">
-                BezKoder
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topNavbar">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="topNavbar">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a th:href="@{/students}" class="nav-link">Students</a>
-                    </li>
-                    <li class="nav-item">
-                        <a th:href="@{/students/new}" class="nav-link">Add</a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    </header>
-
-    <div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
-        <h2 class="text-center">Students</h2>
 
         <div th:if="${message != null}" class="alert alert-success alert-dismissible fade show text-center message"
              role="alert">
@@ -61,10 +24,6 @@
                         <div class="input-group-prepend">
                             <label class="input-group-text" for="pageSize">Students per page:</label>
                         </div>
-                        <select form="searchForm" name="size" th:value="${pageSize}" onchange="changePageSize()" class="size-select"
-                                id="pageSize">
-                            <option th:each="s : ${ {3, 6, 9} }" th:value="${s}" th:text="${s}" th:selected="${s == pageSize}"></option>
-                        </select>
                     </div>
                     <div class="col-md-1 mt-2">
                         <button id="btnClear" class="btn btn-info">Clear</button>
@@ -104,6 +63,7 @@
             <span>No student found!</span>
         </div>
 
+<!--    phân trang ti kiếm-->
         <nav aria-label="Pagination" th:if="${totalPages > 0}">
             <ul class="pagination justify-content-center">
                 <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
@@ -130,7 +90,8 @@
                 </li>
             </ul>
         </nav>
-    </div>
+<!--end phân trang tìm kiếm-->
+</div>
 
     <div class="modal fade text-center" id="confirmModal">
         <div class="modal-dialog">
@@ -153,10 +114,6 @@
             </div>
         </div>
     </div>
-
-    <footer class="text-center">
-        Copyright &copy;BezKoder
-    </footer>
 
     <script type="text/javascript">
     $(document).ready(function () {
@@ -181,5 +138,3 @@
       $("#searchForm").submit();
     }
   </script>
-</body>
-</html>

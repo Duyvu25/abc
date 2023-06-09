@@ -18,7 +18,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Controller
 @RequestMapping
 public class StudentController {
@@ -41,27 +40,48 @@ public class StudentController {
     @GetMapping("/students")
     public String listStudent(
             @RequestParam(defaultValue = "1") Integer pageNo,
-            Model model) {
+            @RequestParam(required = false, defaultValue = "") String keyword,
+            Model model
+    ) {
         int pageSize = 5;
 
-        Page<Student> page = studentService.findPaginated(pageNo, pageSize);
-        List<Student> listStudents = page.getContent();
+        Page<Student> page;
+
+        Pageable paging = PageRequest.of(pageNo-1,pageSize);
+
+        List<Student> listStudents;// = page.getContent();
+
+        if (keyword == "") {
+            page = studentRepository.findAll(paging);
+        } else {
+            page = studentService.search(keyword,paging);
+            model.addAttribute("keyword",keyword);
+        }
+
+        listStudents = page.getContent();
 
         model.addAttribute("currentPage", pageNo);
         model.addAttribute("totalPages", page.getTotalPages());
-        model.addAttribute("totalItems", page.getTotalElements());
+        model.addAttribute("keyword", keyword);
+//        model.addAttribute("totalItems", page.getTotalElements());
         model.addAttribute("students", listStudents);
         return "students";
     }
 
     @GetMapping("/students-search")
-    public String getAll (Model model,@RequestParam(required = false) String keyword,@RequestParam(defaultValue = "1") int page,@RequestParam(defaultValue = "3") int size){
+    public String getAll (
+            Model model,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "7") int size
+    )
+    {
         try {
-            List<Student> students = new ArrayList<Student>();
+            List<Student> students;
             Pageable paging = PageRequest.of(page-1,size);
             Page<Student> pageStu;
             if(keyword == null){
-                pageStu = studentRepository.findAll(paging);
+                pageStu = (Page<Student>) studentRepository.findAll(paging);
             }else{
                 pageStu = studentRepository.search(keyword,paging);
                 model.addAttribute("keyword",keyword);
@@ -75,7 +95,7 @@ public class StudentController {
         }catch (Exception e){
             model.addAttribute("message",e.getMessage());
         }
-        return "student1";
+        return "students";
     }
 
     @GetMapping("/students/new")
@@ -89,23 +109,28 @@ public class StudentController {
 
 
 
-    @PostMapping("/students-search")
-    public String saveStudent(@Valid Student student, BindingResult result, Model model, RedirectAttributes redirectAttributes) throws InterruptedException {
+    @PostMapping("/students")
+    public String saveStudent(
+            @Valid Student student,
+            BindingResult result,
+            Model model,
+            RedirectAttributes redirectAttributes
+    ) throws InterruptedException {
         if (result.hasErrors()) {
             return "create_student";
         }
-        //
+
         if (studentService.isStudentExists(student.getEmail())) {
             // Thông tin đã tồn tại, xử lý lỗi tương ứng
             model.addAttribute("errorMessage", "Thông tin đã tồn tại.");
-            redirectAttributes.addFlashAttribute("errorMessage", "thông tin tồn tại");
+            redirectAttributes.addFlashAttribute("message", "thông tin tồn tại");
             return "create_student";
         }
 
         studentService.saveStudent(student);
         model.addAttribute("successMessage", "Thêm học sinh thành công.");
-        redirectAttributes.addFlashAttribute("successMessage", "Create student successfully");
-        return "redirect:/students-search";
+        redirectAttributes.addFlashAttribute("message", "Create student successfully");
+        return "redirect:/students";
 
         // search
 
@@ -137,14 +162,14 @@ public class StudentController {
         excitingStudent.setEmail(student.getEmail());
 
         studentService.updateStudent(excitingStudent);
-        redirectAttributes.addFlashAttribute("successMessage", "update student successfully");
-        return "redirect:/students-search";
+        redirectAttributes.addFlashAttribute("message", "update student successfully");
+        return "redirect:/students";
     }
 
     @GetMapping("/students/{id}")
     public String deleteStudent(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         studentService.deleteStudentById(id);
-        redirectAttributes.addFlashAttribute("successMessage", "Delete student successfully");
+        redirectAttributes.addFlashAttribute("message", "Delete student successfully");
 
         return "redirect:/students";
     }

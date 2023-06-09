@@ -1,8 +1,8 @@
 package com.example.abc.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import org.springframework.lang.NonNull;
 
 @Entity
 @Table(name = "students")
@@ -17,6 +17,8 @@ public class Student {
     private String name;
     @Column(name = "email")
     @NotEmpty(message = "Student email cannot be empty.")
+    @Email(message = "Invalid email address", regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
+            + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$")
     private String email;
 
     public Student(Long id, String name, String email) {
